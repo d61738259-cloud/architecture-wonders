@@ -3,7 +3,7 @@
 // When a live backend API is available, it communicates with the server;
 // When backend is offline, it provides seamless real-time client-side CRUD persistence.
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('aw_admin_token');
