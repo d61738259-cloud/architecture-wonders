@@ -18,6 +18,8 @@ export default function ProjectsManager() {
   const [editingProject, setEditingProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: '' });
+  const [modalError, setModalError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
@@ -53,6 +55,7 @@ export default function ProjectsManager() {
 
   const openCreateModal = () => {
     setEditingProject(null);
+    setModalError('');
     setForm({
       title: '',
       category: 'Full Home Interiors',
@@ -72,17 +75,18 @@ export default function ProjectsManager() {
 
   const openEditModal = (p) => {
     setEditingProject(p);
+    setModalError('');
     setForm({
-      title: p.title,
-      category: p.category,
-      location: p.location,
+      title: p.title || '',
+      category: p.category || 'Full Home Interiors',
+      location: p.location || 'Zirakpur',
       yearCompleted: p.yearCompleted || 2024,
       areaSqFt: p.areaSqFt || 1500,
       coverImage: p.coverImage || '',
       overview: p.overview || '',
       designConcept: p.designConcept || '',
       description: p.description || '',
-      galleryUrls: (p.gallery || []).map((g) => g.url).join('\n'),
+      galleryUrls: (p.gallery || []).map((g) => (typeof g === 'string' ? g : g?.url || '')).filter(Boolean).join('\n'),
       isFeatured: Boolean(p.isFeatured),
       isPublished: Boolean(p.isPublished),
     });
@@ -90,42 +94,58 @@ export default function ProjectsManager() {
   };
 
   const handleSave = async (e) => {
-    e.preventDefault();
-    setMsg({ text: '', type: '' });
+    if (e && e.preventDefault) e.preventDefault();
+    setModalError('');
 
-    if (!form.title || !form.coverImage || !form.overview || !form.description) {
-      setMsg({ text: 'Please fill in Title, Cover Image URL, Overview, and Description.', type: 'error' });
+    if (!form.title || !form.title.trim()) {
+      setModalError('Please enter a Project Title.');
       return;
     }
 
-    const galleryArray = form.galleryUrls
-      .split('\n')
-      .map((url) => url.trim())
-      .filter(Boolean)
-      .map((url, i) => ({ url, caption: `View ${i + 1}`, order: i }));
-
-    const payload = {
-      ...form,
-      gallery: galleryArray,
-    };
+    setSaving(true);
 
     try {
+      const rawGallery = typeof form.galleryUrls === 'string' ? form.galleryUrls : '';
+      const galleryArray = rawGallery
+        .split('\n')
+        .map((url) => url.trim())
+        .filter(Boolean)
+        .map((url, i) => ({ url, caption: `View ${i + 1}`, order: i }));
+
+      const titleTrimmed = form.title.trim();
+      const locationTrimmed = form.location?.trim() || 'Zirakpur';
+      const coverImageClean = form.coverImage?.trim() || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85';
+      const overviewClean = form.overview?.trim() || `${titleTrimmed} - Premium interior and architectural project in ${locationTrimmed}.`;
+      const descriptionClean = form.description?.trim() || overviewClean;
+
+      const payload = {
+        ...form,
+        title: titleTrimmed,
+        location: locationTrimmed,
+        coverImage: coverImageClean,
+        overview: overviewClean,
+        description: descriptionClean,
+        gallery: galleryArray,
+      };
+
       let res;
-      if (editingProject) {
+      if (editingProject && editingProject._id) {
         res = await api.updateProject(editingProject._id, payload);
       } else {
         res = await api.createProject(payload);
       }
 
-      if (res.success) {
+      if (res && res.success) {
         setMsg({ text: 'Project successfully saved.', type: 'success' });
         setIsModalOpen(false);
-        loadProjects();
+        await loadProjects();
       } else {
-        setMsg({ text: res.message || 'Error saving project.', type: 'error' });
+        setModalError(res?.message || 'Error saving project. Please try again.');
       }
     } catch (err) {
-      setMsg({ text: 'Failed to communicate with database.', type: 'error' });
+      setModalError('Failed to save: ' + (err.message || 'Unknown network error.'));
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -250,10 +270,17 @@ export default function ProjectsManager() {
               <h3 className="text-lg font-serif font-bold text-studio-charcoal">
                 {editingProject ? 'Edit Project' : 'Add New Residential Project'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)}>
+              <button type="button" onClick={() => setIsModalOpen(false)}>
                 <X className="w-5 h-5 text-studio-muted" />
               </button>
             </div>
+
+            {modalError && (
+              <div className="p-3 bg-red-50 border border-red-300 text-red-700 text-xs rounded flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{modalError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div>
@@ -262,7 +289,6 @@ export default function ProjectsManager() {
                 </label>
                 <input
                   type="text"
-                  required
                   placeholder="e.g. The Contemporary Stone Residence"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -273,7 +299,7 @@ export default function ProjectsManager() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block uppercase font-semibold text-studio-charcoal mb-1">
-                    Category *
+                    Category
                   </label>
                   <select
                     value={form.category}
@@ -290,11 +316,10 @@ export default function ProjectsManager() {
 
                 <div>
                   <label className="block uppercase font-semibold text-studio-charcoal mb-1">
-                    Verified Location *
+                    Verified Location
                   </label>
                   <input
                     type="text"
-                    required
                     placeholder="e.g. VIP Road, Zirakpur"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -331,12 +356,11 @@ export default function ProjectsManager() {
 
               <div>
                 <label className="block uppercase font-semibold text-studio-charcoal mb-1">
-                  Cover Image URL *
+                  Cover Image URL
                 </label>
                 <input
                   type="text"
-                  required
-                  placeholder="https://... or upload in Media Library"
+                  placeholder="https://... or image link"
                   value={form.coverImage}
                   onChange={(e) => setForm({ ...form, coverImage: e.target.value })}
                   className="w-full p-2.5 border border-studio-border text-sm outline-none focus:border-studio-teal"
@@ -345,11 +369,11 @@ export default function ProjectsManager() {
 
               <div>
                 <label className="block uppercase font-semibold text-studio-charcoal mb-1">
-                  Overview Summary *
+                  Overview Summary
                 </label>
                 <textarea
                   rows="2"
-                  required
+                  placeholder="Brief summary of the architecture and interior design..."
                   value={form.overview}
                   onChange={(e) => setForm({ ...form, overview: e.target.value })}
                   className="w-full p-2.5 border border-studio-border text-sm outline-none focus:border-studio-teal"
@@ -371,11 +395,11 @@ export default function ProjectsManager() {
 
               <div>
                 <label className="block uppercase font-semibold text-studio-charcoal mb-1">
-                  Detailed Description *
+                  Detailed Description
                 </label>
                 <textarea
-                  rows="4"
-                  required
+                  rows="3"
+                  placeholder="Full architectural description..."
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full p-2.5 border border-studio-border text-sm outline-none focus:border-studio-teal"
@@ -417,19 +441,28 @@ export default function ProjectsManager() {
                 </label>
               </div>
 
+              {modalError && (
+                <div className="p-3 bg-red-50 border border-red-300 text-red-700 text-xs rounded flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{modalError}</span>
+                </div>
+              )}
+
               <div className="pt-4 border-t border-studio-border flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 border border-studio-border text-studio-charcoal font-semibold uppercase text-xs"
+                  className="px-5 py-2.5 border border-studio-border text-studio-charcoal font-semibold uppercase text-xs hover:bg-studio-soft"
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
-                  className="px-6 py-2.5 bg-studio-charcoal text-white font-semibold uppercase text-xs hover:bg-studio-teal transition-all"
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="px-6 py-2.5 bg-studio-charcoal text-white font-semibold uppercase text-xs hover:bg-studio-teal transition-all disabled:opacity-50"
                 >
-                  Save Project
+                  {saving ? 'Saving...' : 'Save Project'}
                 </button>
               </div>
             </form>

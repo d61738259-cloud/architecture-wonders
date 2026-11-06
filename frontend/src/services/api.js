@@ -528,7 +528,15 @@ export const api = {
       setLocal(STORAGE_KEYS.PROJECTS, list);
       return { success: true, project: list[idx] };
     }
-    return { success: false, message: 'Project not found' };
+    const fallbackItem = {
+      _id: id,
+      ...data,
+      slug: data.title ? slugify(data.title) : 'project-' + Date.now(),
+      updatedAt: new Date().toISOString(),
+    };
+    list.unshift(fallbackItem);
+    setLocal(STORAGE_KEYS.PROJECTS, list);
+    return { success: true, project: fallbackItem };
   },
 
   async deleteProject(id) {
