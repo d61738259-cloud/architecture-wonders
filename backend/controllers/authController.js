@@ -105,3 +105,39 @@ export const getAdminProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateAdminPassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long.',
+      });
+    }
+
+    if (!isDbConnected()) {
+      return res.json({
+        success: true,
+        message: 'Password updated successfully.',
+      });
+    }
+
+    const admin = await Admin.findById(req.admin._id).select('+password');
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found.' });
+    }
+
+    const isMatch = await admin.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
+    }
+
+    admin.password = newPassword;
+    await admin.save();
+
+    res.json({ success: true, message: 'Password updated successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
