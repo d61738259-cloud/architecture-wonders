@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Compass, ArrowRight } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -24,6 +25,11 @@ export default function Services() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title="Architecture & Interior Design Services in Zirakpur, Mohali, Chandigarh"
+        description="Comprehensive architecture and interior design services: Full home interiors, modular kitchens, turnkey interior execution, 3D architectural rendering."
+        keywords="interior design services zirakpur, modular kitchen services chandigarh, residential architect mohali, turnkey home interiors"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

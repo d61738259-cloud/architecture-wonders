@@ -1,10 +1,16 @@
 import React from 'react';
 import CostCalculator from '../components/CostCalculator';
+import SEO from '../components/SEO';
 import { ShieldCheck, Layers, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function CalculatorPage() {
   return (
     <div className="bg-white">
+      <SEO
+        title="Interior Cost Calculator per Sq Ft | Architecture Wonders Zirakpur"
+        description="Calculate realistic residential interior design costs per square foot in Zirakpur, Chandigarh, and Mohali. Free instant estimate for 2BHK, 3BHK, 4BHK and luxury villas."
+        keywords="interior design cost per sq ft zirakpur, interior cost calculator chandigarh, home interior cost estimator mohali, 3bhk interior budget zirakpur"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

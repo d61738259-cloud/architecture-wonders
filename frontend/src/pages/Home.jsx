@@ -18,6 +18,7 @@ import {
   Star,
 } from 'lucide-react';
 import CostCalculator from '../components/CostCalculator';
+import SEO from '../components/SEO';
 import { api } from '../services/api';
 import {
   fadeInUp,
@@ -91,6 +92,11 @@ export default function Home() {
 
   return (
     <div className="bg-white overflow-hidden">
+      <SEO
+        title="Architecture Wonders | Premium Architecture & Interior Design Studio | Zirakpur"
+        description="Architecture Wonders is an editorial architecture and luxury interior design studio based on VIP Road, Zirakpur. 50+ completed residential home interior projects across Zirakpur, Chandigarh & Mohali."
+        keywords="interior designers in zirakpur, home interior designers zirakpur, residential interior design chandigarh, modular kitchen designers mohali, architecture wonders, interior design studio zirakpur"
+      />
       {/* SECTION 1: HERO */}
       <section className="relative min-h-[92vh] flex items-center justify-center bg-studio-soft border-b border-studio-border px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

@@ -11,10 +11,16 @@ import {
   MapPin,
   Clock,
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function About() {
   return (
     <div className="bg-white">
+      <SEO
+        title="About Our Architecture & Interior Design Studio | Zirakpur, Punjab"
+        description="Architecture Wonders was founded in 2023 on VIP Road, Zirakpur. With 50+ completed luxury residential projects across Chandigarh, Mohali, and Zirakpur."
+        keywords="about architecture wonders, interior design studio zirakpur, best architects zirakpur, interior designer profile punjab"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

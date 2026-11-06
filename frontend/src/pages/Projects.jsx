@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, ArrowUpRight, Filter } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 const categories = [
   'All Projects',
@@ -43,6 +44,11 @@ export default function Projects() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title="Completed Interior & Architecture Projects Portfolio | Architecture Wonders"
+        description="Browse 50+ completed luxury residential interior projects by Architecture Wonders across Zirakpur, VIP Road, Mohali, and Chandigarh."
+        keywords="interior design projects zirakpur, luxury apartments portfolio chandigarh, residential architecture mohali, 4bhk interior design photos"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

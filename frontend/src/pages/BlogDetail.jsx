@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, User, ArrowRight } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -48,6 +49,11 @@ export default function BlogDetail() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title={`${article.title} | Architecture Wonders`}
+        description={article.summary || article.metaDescription || `Read ${article.title} by Architecture Wonders.`}
+        image={article.coverImage}
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-4">

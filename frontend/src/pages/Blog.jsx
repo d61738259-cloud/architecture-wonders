@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Tag } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 export default function Blog() {
   const [articles, setArticles] = useState([]);
@@ -23,6 +24,11 @@ export default function Blog() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title="Architecture & Interior Design Blog | Architecture Wonders Zirakpur"
+        description="Expert guides on residential interior costs per sq ft in Zirakpur, modular kitchen finishes, acrylic vs PU, and timeless Indian home materials."
+        keywords="interior design blog zirakpur, cost per sq ft guide, modular kitchen materials, interior architecture articles chandigarh"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

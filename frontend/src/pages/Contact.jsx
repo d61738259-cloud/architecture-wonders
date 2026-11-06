@@ -11,6 +11,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 export default function Contact() {
   const [activeTab, setActiveTab] = useState('project'); // 'project' or 'general'
@@ -86,6 +87,11 @@ export default function Contact() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title="Contact Architecture Wonders | VIP Road, Zirakpur | Studio Consultation"
+        description="Schedule an architectural or interior design consultation at Architecture Wonders. Located at Shop No. 8, Star City Business Plaza, VIP Road, Zirakpur, Punjab. Call +91 6280 609 005."
+        keywords="interior designer contact zirakpur, architecture wonders phone number, vip road zirakpur architects, interior consultation mohali"
+      />
       {/* Header Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">

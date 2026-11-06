@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, MapPin, MessageSquare, Phone, Calendar, Maximize2 } from 'lucide-react';
 import { api } from '../services/api';
+import SEO from '../components/SEO';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -56,6 +57,11 @@ export default function ProjectDetail() {
 
   return (
     <div className="bg-white">
+      <SEO
+        title={`${project.title} | Architecture Wonders`}
+        description={project.overview || project.description || `Explore ${project.title} in ${project.location} designed by Architecture Wonders.`}
+        image={project.coverImage}
+      />
       {/* Top Banner */}
       <section className="bg-studio-soft border-b border-studio-border py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">
